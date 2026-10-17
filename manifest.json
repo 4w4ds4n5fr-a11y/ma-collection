@@ -1,0 +1,14 @@
+{
+  "name": "Ma Collection — Enchères & Maison",
+  "short_name": "Ma Collection",
+  "description": "Un jeu d'enchères et de décoration à plusieurs.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "orientation": "portrait",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}

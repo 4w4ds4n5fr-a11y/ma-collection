@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1020">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ma Collection">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Ma Collection — Enchères</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#151f34;--line:#30405b;--muted:#9eacc5;--purple:#a78bfa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#f1f5f9;font:16px system-ui,-apple-system,sans-serif;padding:16px;max-width:850px;margin:auto}button,input,select{font:inherit}button{cursor:pointer}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.primary{background:var(--purple);color:#17132a;border:0;border-radius:10px;padding:12px 15px;font-weight:800}.secondary{background:#25344e;color:white;border:1px solid #3b4d69;border-radius:10px;padding:10px 12px}.field{width:100%;background:#0d1629;color:white;border:1px solid #40506b;border-radius:9px;padding:10px}.muted{color:var(--muted)}.theme{border:1px solid #3b4b66;background:#1b2941;color:white;padding:12px;border-radius:10px;text-align:center}.theme.sel{border-color:#b6a0ff;background:#33284f}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.hide{display:none!important}.roomgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;padding:5px;background:#75573d;border-radius:9px}.room{min-height:135px;border:3px solid #715741;border-radius:5px;overflow:hidden;background:#c4a078;color:#302316;padding:8px}.room:nth-child(2){background:#a8c2cf}.room:nth-child(3){background:#c5a4bb}.room:nth-child(4){background:#a5b88c}.room:nth-child(5){background:#d4c49c}.room:nth-child(6){background:#a8a8c6}.roomlabel{font-size:11px;font-weight:900;background:#f7e8cbdd;display:inline-block;padding:4px 6px;border-radius:6px}.placed{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}.placeditem{width:calc(50% - 2px);min-height:45px;background:#fff5dfdc;border:1px solid #b99a72;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4px;overflow-wrap:anywhere;font-size:10px;font-weight:700}.placeditem span{font-size:23px}.player{border:1px solid #36445e;background:#19243a;border-radius:10px;padding:9px}.player.turn{border-color:#b6a0ff;background:#302744}.object{text-align:center;background:#101a2d;border:1px solid #35445e;border-radius:12px;padding:16px}.big{font-size:36px;font-weight:900}.small{font-size:12px}.tag{background:#28334c;padding:6px 9px;border-radius:9px;font-size:12px}h1{font-size:25px;margin:0}h2{font-size:20px;margin:0 0 8px}@media(min-width:600px){.room{min-height:170px}.placeditem{width:calc(33.333% - 3px)}}
+</style>
+</head>
+<body>
+<header style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px"><div><div style="color:#b9a4ff;font-size:11px;font-weight:800;letter-spacing:2px">ENCHÈRES · DÉCORATION</div><h1>🏡 Ma Collection</h1></div><span class="tag">🪙 Argent fictif</span></header>
+<section id="setup">
+<div class="panel"><h2>Créez votre partie</h2><p class="muted small">De 2 à 10 joueurs · 20 € chacun</p><label class="small">Nombre de joueurs</label><select id="count" class="field" style="margin:6px 0 10px"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option></select><div id="names" class="grid"></div></div>
+<div class="panel"><h2>Choisissez un univers</h2><p class="muted small">Les objets gagnés seront placés dans la maison de chaque joueur.</p><div id="themes" class="grid"></div><label class="small" style="display:block;margin-top:12px">Thème personnalisé</label><div style="display:flex;gap:7px;margin-top:6px"><input id="custom" class="field" placeholder="Ex. : sport, espace…"><button id="addTheme" class="secondary">Ajouter</button></div></div>
+<button id="start" class="primary" style="width:100%">🚀 Démarrer les enchères</button>
+</section>
+<section id="game" class="hide">
+<div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0"><div><div class="muted small">UNIVERS</div><b id="universe"></b></div><div style="text-align:right"><div class="muted small">TOUR</div><b id="round"></b></div></div>
+<div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><b>🔨 Objet aux enchères</b><span id="category" class="muted small"></span></div><div class="object" style="margin-top:10px"><div id="emoji" style="font-size:64px"></div><div id="item" style="font-size:20px;font-weight:900"></div><div id="desc" class="muted small" style="margin:5px 0 12px"></div><div class="muted small">ENCHÈRE ACTUELLE</div><div id="price" class="big">0 €</div><div id="leader" style="color:#c4b5fd;font-size:12px"></div></div><div id="turnText" class="panel small" style="margin-bottom:0"></div><div id="actions" class="grid" style="margin-top:10px"><button id="bid" class="primary">⬆️ Enchérir +1 €</button><button id="pass" class="secondary">Passer</button></div><div id="advance" class="hide" style="margin-top:10px"><p id="message" class="small"></p><button id="next" class="primary" style="width:100%">Objet suivant →</button></div></div>
+<h2>👥 Joueurs et budgets</h2><div id="players" class="grid"></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 8px"><div><h2>🏠 Maison du joueur</h2><div id="owner" class="muted small"></div></div><span id="total" class="tag"></span></div><div id="tabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px"></div><div id="house" class="roomgrid"></div>
+<div class="panel"><h2>🧺 Objets collectionnés</h2><div id="collection" class="small" style="margin-top:8px"></div></div><button id="finish" class="secondary" style="width:100%">🏆 Terminer la partie</button>
+</section>
+<section id="results" class="hide"><div class="panel" style="text-align:center;padding:22px 12px"><div style="font-size:52px">🏆</div><h2 id="champion"></h2><div id="summary" class="muted small"></div></div><div id="rankings"></div><button id="restart" class="primary" style="width:100%;margin-top:12px">Nouvelle partie</button></section>
+<p class="muted" style="font-size:10px;text-align:center;margin-top:20px">MA COLLECTION · Jeu local · Aucune monnaie réelle</p>
+<script>
+const $=id=>document.getElementById(id), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const source=[
+["Jeux vidéo","🎮",[["🎮","Console rétro",5,0],["🕹️","Manette collector",3,0],["💻","PC gaming",7,1],["🎧","Casque gamer",3,1],["🪑","Fauteuil gaming",4,2],["🖥️","Écran 4K",6,1],["⌨️","Clavier mécanique",3,1],["🏆","Trophée légendaire",8,2],["🎲","Jeu collector",4,0],["💡","Néon gaming",2,2]]],
+["Maison","🏡",[["🛋️","Canapé design",6,0],["🪴","Plante tropicale",2,3],["💡","Lampe design",3,2],["📺","Téléviseur géant",7,0],["🛏️","Lit confortable",6,1],["🖼️","Tableau moderne",3,2],["☕","Machine à café",4,3],["🪞","Miroir vintage",3,1],["🧸","Fauteuil cosy",4,0],["🏊","Mini piscine",8,3]]],
+["Animaux","🐾",[["🐶","Panier de luxe",3,0],["🐱","Arbre à chat",4,0],["🐠","Aquarium",5,2],["🐰","Enclos de jeu",3,3],["🦜","Perchoir design",2,1],["🐴","Écurie miniature",6,3],["🦎","Terrarium",4,2],["🐕","Parcours agility",5,3],["🐢","Bassin zen",4,2],["🦋","Jardin à papillons",3,3]]],
+["Voyage","🌍",[["🎒","Sac d'aventure",3,1],["📷","Appareil photo",5,2],["⛺","Tente premium",4,3],["🚲","Vélo de randonnée",5,3],["🗺️","Carte ancienne",3,2],["🧳","Valise cabine",3,1],["🏝️","Séjour sur une île",8,3],["🕶️","Lunettes de soleil",2,1],["🛶","Kayak",6,3],["🔭","Jumelles",3,2]]],
+["Espace","🚀",[["🚀","Fusée miniature",6,2],["🪐","Globe planétaire",3,2],["🔭","Télescope",5,1],["👨‍🚀","Combinaison spatiale",7,1],["🛰️","Satellite",5,2],["🌕","Roche lunaire",8,2],["🤖","Robot assistant",4,0],["☄️","Météorite",6,2],["🌌","Projecteur galaxie",3,1],["🛸","Vaisseau alien",7,0]]],
+["Cuisine","🍕",[["🍕","Four à pizza",5,0],["🍰","Présentoir à gâteaux",3,2],["🍳","Poêle premium",3,3],["🧁","Robot pâtissier",7,3],["☕","Machine expresso",5,3],["🔪","Set de couteaux",4,3],["🍜","Bol à ramen collector",2,0],["🧀","Plateau gourmand",4,0],["🥤","Blender puissant",3,3],["🍫","Fontaine à chocolat",6,2]]]];
+let themes=source.map(d=>({name:d[0],emoji:d[1],items:d[2]})),chosen="Jeux vidéo",players=[],lots=[],round=0,lot=null,active=[],turn=-1,leader=-1,bid=0,closed=false,view=0;
+const rooms=["🛋️ Salon","🛏️ Chambre","🎮 Bureau","🖼️ Déco","🍽️ Cuisine","🛁 Salle de bain","🌳 Jardin","📦 Autres"];
+function drawNames(){let old=[...document.querySelectorAll(".pname")].map(e=>e.value);$("names").innerHTML=Array.from({length:+$("count").value},(_,i)=>`<input class="field pname" maxlength="18" placeholder="Joueur ${i+1}" value="${esc(old[i]||"Joueur "+(i+1))}">`).join("")}
+$("count").onchange=drawNames;drawNames();
+function drawThemes(){$("themes").innerHTML=themes.map(t=>`<button class="theme ${chosen===t.name?'sel':''}" data-name="${esc(t.name)}"><div style="font-size:27px">${t.emoji}</div><b>${esc(t.name)}</b></button>`).join("");$("themes").querySelectorAll("button").forEach(b=>b.onclick=()=>{chosen=b.dataset.name;drawThemes()})}
+drawThemes();
+$("addTheme").onclick=()=>{let n=$("custom").value.trim();if(!n)return;let found=themes.find(t=>t.name.toLowerCase()===n.toLowerCase());if(found){chosen=found.name;drawThemes();return}let temp=[["⭐","Objet collector",4,0],["🎁","Accessoire premium",3,1],["🏆","Pièce légendaire",7,2],["💎","Objet rare",6,2],["🛠️","Équipement spécial",4,3],["🎯","Objet indispensable",3,0],["🌟","Édition exclusive",5,1],["🧸","Objet adorable",2,0],["🚀","Version ultime",7,2],["🎨","Pièce personnalisée",4,1]];themes.push({name:n,emoji:"✨",items:temp.map(x=>[x[0],n+" : "+x[1],x[2],x[3]])});chosen=n;$("custom").value="";drawThemes()};
+function start(){let t=themes.find(x=>x.name===chosen);players=[...document.querySelectorAll(".pname")].map((e,i)=>({name:e.value.trim()||"Joueur "+(i+1),cash:20,items:[],passed:false}));lots=t.items.map(x=>({emoji:x[0],name:x[1],value:x[2],room:x[3]})).sort(()=>Math.random()-.5);round=0;view=0;$("universe").textContent=t.emoji+" "+t.name;$("setup").classList.add("hide");$("results").classList.add("hide");$("game").classList.remove("hide");renderTabs();newLot()}
+function renderTabs(){$("tabs").innerHTML=players.map((p,i)=>`<button class="secondary" data-view="${i}" style="font-size:11px;padding:8px;${view===i?'border-color:#b6a0ff;background:#382c53':''}">${esc(p.name)}</button>`).join("");$("tabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{view=+b.dataset.view;renderTabs();renderHouse()})}
+function renderHouse(){let p=players[view];$("owner").textContent="Maison de "+p.name+" · "+p.items.length+" objets";$("total").textContent="Valeur : "+p.items.reduce((s,x)=>s+x.value,0)+" €";$("house").innerHTML=rooms.slice(0,6).map((r,i)=>{let its=p.items.filter(x=>x.room===i);return `<div class="room"><div class="roomlabel">${r}</div><div class="placed">${its.map(x=>`<div class="placeditem"><span>${x.emoji}</span>${esc(x.name)}</div>`).join("")}</div>${its.length?"":'<div class="muted small" style="margin-top:10px;color:#71583d">Pièce vide</div>'}</div>`}).join("");$("collection").innerHTML=p.items.length?p.items.map(x=>`<span class="tag" style="display:inline-block;margin:2px">${x.emoji} ${esc(x.name)} · ${x.paid} €</span>`).join(""):"Aucun objet remporté pour l'instant."}
+function newLot(){if(round>=8||round>=lots.length){finish();return}round++;lot=lots[round-1];active=players.map((p,i)=>i).filter(i=>p.cash>0);players.forEach(p=>p.passed=false);turn=active.length?active[0]:-1;leader=-1;bid=0;closed=false;$("actions").classList.remove("hide");$("advance").classList.add("hide");$("round").textContent=round+" / 8";$("category").textContent=rooms[lot.room];$("emoji").textContent=lot.emoji;$("item").textContent=lot.name;$("desc").textContent="Pour "+rooms[lot.room]+" · Valeur estimée : "+lot.value+" €";renderGame()}
+function nextTurn(from){for(let k=1;k<=players.length;k++){let i=(from+k)%players.length;if(active.includes(i)&&!players[i].passed&&players[i].cash>bid)return i}return -1}
+function renderGame(){$("price").textContent=bid+" €";$("leader").textContent=leader<0?"Pas encore d'offre":"En tête : "+players[leader].name;$("turnText").innerHTML=closed?"Enchères terminées.":turn<0?"Plus d'enchérisseurs disponibles.":`🎯 Au tour de <b>${esc(players[turn].name)}</b> · Budget : <b>${players[turn].cash} €</b>`;$("bid").disabled=closed||turn<0||players[turn].cash<bid+1||active.filter(i=>!players[i].passed).length<2;$("pass").disabled=closed||turn<0;$("players").innerHTML=players.map((p,i)=>`<div class="player ${turn===i?'turn':''}" data-visit="${i}" style="cursor:pointer"><b class="small">${esc(p.name)} ${leader===i?'👑':''}</b><div style="font-size:19px;font-weight:900">${p.cash} €</div><div class="muted small">${p.items.length} objets · ${p.passed?'Passé':'En jeu'}</div></div>`).join("");$("players").querySelectorAll("[data-visit]").forEach(b=>b.onclick=()=>{view=+b.dataset.visit;renderTabs();renderHouse()});renderHouse()}
+function conclude(){closed=true;$("actions").classList.add("hide");$("advance").classList.remove("hide");if(leader>=0){let p=players[leader];p.cash-=bid;p.items.push({...lot,paid:bid});$("message").innerHTML="🔨 <b>"+esc(p.name)+"</b> remporte "+esc(lot.name)+" pour "+bid+" € ! L'objet rejoint sa maison.";view=leader;renderTabs()}else $("message").textContent="Objet invendu.";renderGame();$("next").textContent=round>=8?"Voir les résultats 🏆":"Objet suivant →"}
+$("bid").onclick=()=>{if(closed||turn<0)return;bid++;leader=turn;if(active.filter(i=>!players[i].passed).length<=1){conclude();return}let n=nextTurn(turn);if(n<0)conclude();else{turn=n;renderGame()}};
+$("pass").onclick=()=>{if(closed||turn<0)return;players[turn].passed=true;if(active.filter(i=>!players[i].passed).length<=1){conclude();return}let n=nextTurn(turn);if(n<0)conclude();else{turn=n;renderGame()}};
+function finish(){$("game").classList.add("hide");$("results").classList.remove("hide");let ranks=players.map(p=>({...p,score:p.cash+p.items.reduce((s,x)=>s+x.value,0)})).sort((a,b)=>b.score-a.score);$("champion").textContent="🥇 "+ranks[0].name+" gagne !";$("summary").textContent="Score : "+ranks[0].score+" points · Budget restant : "+ranks[0].cash+" €";$("rankings").innerHTML=ranks.map((p,i)=>`<div class="panel" style="display:flex;align-items:center;gap:10px"><div style="font-size:23px">${["🥇","🥈","🥉"][i]||"🏅"}</div><div style="flex:1"><b>${esc(p.name)}</b><div class="muted small">${p.items.length} objets · ${p.cash} € restants</div><div style="font-size:22px">${p.items.map(x=>x.emoji).join(" ")||"—"}</div></div><b style="font-size:23px">${p.score}</b></div>`).join("")}
+$("start").onclick=start;$("next").onclick=newLot;$("finish").onclick=finish;$("restart").onclick=()=>{$("results").classList.add("hide");$("setup").classList.remove("hide");drawNames();drawThemes()};
+if("serviceWorker" in navigator && location.protocol!=="file:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(()=>{}))}
+</script>
+</body></html>
+{
+  "name": "Ma Collection — Enchères & Maison",
+  "short_name": "Ma Collection",
+  "description": "Un jeu d'enchères et de décoration à plusieurs.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b1020",
+  "theme_color": "#0b1020",
+  "orientation": "portrait",
+  "icons": [
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+  ]
+}
+# Ma Collection — Enchères & Maison
+
+## Fichiers
+- `index.html` : le jeu
+- `manifest.json` : informations d'installation
+- `sw.js` : cache pour un usage hors connexion après le premier chargement
+- `icon-192.png` et `icon-512.png` : icônes
+
+## Pour l'installer sur un téléphone
+Une PWA doit être servie par HTTPS (ou localhost) pour que l'installation et le mode hors connexion fonctionnent correctement. Il ne suffit pas d'ouvrir `index.html` depuis les fichiers du téléphone.
+
+### Méthode simple : GitHub Pages
+1. Sur un ordinateur, crée un compte ou connecte-toi à GitHub.
+2. Crée un nouveau dépôt public, par exemple `ma-collection`.
+3. Envoie les cinq fichiers du dossier dans le dépôt, à la racine.
+4. Dans le dépôt, ouvre **Settings → Pages**.
+5. Choisis **Deploy from a branch**, puis la branche `main` et le dossier `/ (root)`, puis **Save**.
+6. Attends que GitHub fournisse l'adresse HTTPS de ton site.
+7. Ouvre cette adresse sur ton téléphone :
+   - **iPhone (Safari)** : bouton Partager → **Sur l'écran d'accueil** → Ajouter.
+   - **Android (Chrome)** : menu ⋮ → **Installer l'application** ou **Ajouter à l'écran d'accueil**.
+
+Le jeu est local à l'appareil : les parties ne sont pas synchronisées entre plusieurs téléphones. Pour jouer ensemble, utilisez le même téléphone et passez-le entre les joueurs. Une version en ligne multi-appareils demanderait un serveur.
+
+const CACHE="ma-collection-v1";const FILES=["./","./index.html","./manifest.json","./icon-192.png","./icon-512.png"];self.addEventListener("install",e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES))));self.addEventListener("activate",e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k!==CACHE).map(k=>caches.delete(k))))));self.addEventListener("fetch",e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
